@@ -2,31 +2,31 @@
     "skinList": [
         {
             "name": "Default",
-            "hex": "3366-34B2-CD98-8868-5D00"
+            "hex": "3366-34B2-CD98-8868-5DF3"
         },
         {
             "name": "Second",
-            "hex": "416F-99A9-C4DE-ABB6-B900"
+            "hex": "416F-99A9-C4DE-ABB6-B96E"
         },
         {
             "name": "Third",
-            "hex": "922C-2CD8-AFAF-5E52-4F00"
+            "hex": "922C-2CD8-AFAF-5E52-4FF0"
         },
         {
             "name": "Fourth",
-            "hex": "7C73-13CD-CC98-6F85-6C00"
+            "hex": "7C73-13CD-CC98-6F85-6CE2"
         },
         {
             "name": "Fifth",
-            "hex": "5D5D-5DCD-CDCD-6B39-3900"
+            "hex": "5D5D-5DCD-CDCD-6B39-3931"
         },
         {
             "name": "Sixth",
-            "hex": "5233-66BB-98CD-3062-7000"
+            "hex": "5233-66BB-98CD-3062-70B8"
         },
         {
             "name": "Seventh",
-            "hex": "92CD-C7C1-D2D0-7997-9400"
+            "hex": "92CD-C7C1-D2D0-7997-94F8"
         }
     ],
     "ogColor": [

@@ -98,6 +98,7 @@ function parser(input) {  //returns object if successful; return string array if
   trueSkinsMatrix.forEach((item, i) => {
     let newCode = "";
     let lettercounter = 0;
+    let checksum = 0;
     item.forEach((itemb, j) => {
       itemb.forEach((itemc, k) => {
         newCode += toHex(itemc);
@@ -105,11 +106,10 @@ function parser(input) {  //returns object if successful; return string array if
         if (lettercounter%2 == 0){
           newCode += "-";
         }
+        checksum += (101 + k + j)*itemc;
       });
     });
-
-    //TO DO: CHECKSUM - Not needed for Stream tool
-    newCode += "00";
+    newCode += toHex(checksum%256);
     ++lettercounter;
 
     if (lettercounter%2 == 1){
