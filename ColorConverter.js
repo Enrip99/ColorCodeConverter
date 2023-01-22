@@ -6,19 +6,18 @@ const rgxPatternEmpty = new RegExp("\\s", "g")
 const rgxPatternNumbers = new RegExp("[^\\d]", "g")
 
 
-function skinNameByID(integer){
+function skinNameByID(integer){ //returns ordinal as text for 1-9. Returns number itself as text if higher
   let names = ["Default", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eigth", "Ninth"];
-  if (integer < 10) return names[integer];
+  if (integer < 10 && integer >= 0) return names[integer];
   return integer.toString();
 }
 
-function toHex(integer){
+function toHex(integer){ //converts number to its hexadecimal representation as an upper-case string
   let str = Number(integer).toString(16).toUpperCase();
   return str.length == 1 ? "0" + str : str;
 }
 
 function parser(input) { //returns object
-
 
   let skinNum = 0; //Number of skins the character has
   let regionNum = 0; //Number of different tracked colors the character has
