@@ -43,9 +43,30 @@ function parser(input) {  //returns object if successful; return string array if
 
 
   let splitInput = input.split("\n");
-  splitInput.forEach((item, i) => { //remove comments and spaces
+  splitInput.forEach((item, i) => { //remove "//" comments and spaces
     splitInput[i] = item.split("//")[0].replace(rgxPatternEmpty, "");
   });
+  //remove /* content */ comments
+  let commented = false;
+  splitInput.forEach((item, i) => {
+    if (commented){
+      if (item.match("\\*/")){
+        splitInput[i] = item.split("\*/")[1];
+        commented = false;
+      }
+      else splitInput[i] = "";
+    }
+    else{
+      if (item.match("/\\*.*\\*/")){
+        splitInput[i] = item.split("/\*")[0] + item.split("\*/")[1];
+      }
+      else if (item.match("/\\*")){
+        splitInput[i] = item.split("/\*")[0];
+        commented = true;
+      }
+    }
+  });
+
 
   //Scan through all lines of code, store them in temporary values
   splitInput.forEach((item, i) => {
@@ -188,7 +209,11 @@ function parser(input) {  //returns object if successful; return string array if
 }
 
 if (require.main === module) {
-  fs.readFile("colors.gml", 'utf8', function(err, data) {
+  let inputFile = "colors.gml";
+  if (process.argv.length == 3){
+    inputFile = process.argv[2];
+  }
+  fs.readFile(inputFile, 'utf8', function(err, data) {
     if (err) throw err;
 
     let result = parser(data);
