@@ -149,7 +149,6 @@ function parser(input) {
       vsScreen: uiElement,
       gui: uiElement
     }
-    console.log(finalObj)
     fs.writeFile("_info.json", JSON.stringify(finalObj, null, 4), function(err) {
 		  if (err) console.log(err)
 	  })
