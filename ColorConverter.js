@@ -4,7 +4,15 @@ const rgxPatternInit = new RegExp("set_num_palettes\\(\\d+\\);", "i") //Matches 
 const rgxPatternRange = new RegExp("set_color_profile_slot_range\\(\\d+,\\d+,\\d+,\\d+\\);", "i") //Matches set_color_profile_slot_range function
 const rgxPatternEmpty = new RegExp("\\s", "g") //Matches all whitespace characters
 const rgxPatternNumbers = new RegExp("[^\\d]", "g") //Matches all non-digit characters
-
+const RE_BLOCKS = new RegExp([
+    /\/(\*)[^*]*\*+(?:[^*\/][^*]*\*+)*\//.source,           // $1: multi-line comment
+    /\/(\/)[^\n]*$/.source,                                 // $2 single-line comment
+    /"(?:[^"\\]*|\\[\S\s])*"|'(?:[^'\\]*|\\[\S\s])*'/.source, // string, don't care about embedded eols
+    /(?:[$\w\)\]]|\+\+|--)\s*\/(?![*\/])/.source,           // division operator
+    /\/(?=[^*\/])[^[/\\]*(?:(?:\[(?:\\.|[^\]\\]*)*\]|\\.)[^[/\\]*)*?\/[gim]*/.source
+    ].join('|'),                                            // regex
+    'gm'  // note: global+multiline with replace() need test
+    );
 
 function skinNameByID(integer){ //returns ordinal as text for 0-9. Returns number itself+1 as text if higher
   let names = ["Default", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eigth", "Ninth", "Tenth"];
@@ -29,6 +37,14 @@ function cap(a){  //caps a number between 0 and 255
   return max(min(a, 255),0);
 }
 
+function stripComments(str) { //removes comments from colors file
+    return str.replace(RE_BLOCKS, function (match, mlc, slc) {
+        return mlc ? ' ' :     // multiline comment (must be replaced with one space)
+               slc ? '' :      // single-line comment
+               match;          // divisor, regex, or string, return as-is
+        });
+}
+
 function parser(input) {  //returns object if successful; return string array if it contains errors
                           //input should be a single string containing the whole code of colors.gml
 
@@ -41,32 +57,10 @@ function parser(input) {  //returns object if successful; return string array if
   let codes = []; //Stores each skin's code - codes[skin] = skin code string, eg: "0123-4567-89AB"
   let errors = []; //Stores all encountered errors as plain text
 
-
-  let splitInput = input.split("\n");
-  splitInput.forEach((item, i) => { //remove "//" comments and spaces
-    splitInput[i] = item.split("//")[0].replace(rgxPatternEmpty, "");
+  let splitInput = stripComments(input).split("\n"); //removes comments
+  splitInput.forEach((item, i) => { //remove spaces
+    splitInput[i] = item.replace(rgxPatternEmpty, "");
   });
-  //remove /* content */ comments
-  let commented = false;
-  splitInput.forEach((item, i) => {
-    if (commented){
-      if (item.match("\\*/")){
-        splitInput[i] = item.split("\*/")[1];
-        commented = false;
-      }
-      else splitInput[i] = "";
-    }
-    else{
-      if (item.match("/\\*.*\\*/")){
-        splitInput[i] = item.split("/\*")[0] + item.split("\*/")[1];
-      }
-      else if (item.match("/\\*")){
-        splitInput[i] = item.split("/\*")[0];
-        commented = true;
-      }
-    }
-  });
-
 
   //Scan through all lines of code, store them in temporary values
   splitInput.forEach((item, i) => {
