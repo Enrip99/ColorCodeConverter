@@ -1,9 +1,9 @@
 const fs = require('fs');
-const rgxPatternColor = new RegExp("set_color_profile_slot\\(\\d+,\\d+,\\d+,\\d+,\\d+\\);", "i")
-const rgxPatternInit = new RegExp("set_num_palettes\\(\\d+\\);", "i")
-const rgxPatternRange = new RegExp("set_color_profile_slot_range\\(\\d+,\\d+,\\d+,\\d+\\);", "i")
-const rgxPatternEmpty = new RegExp("\\s", "g")
-const rgxPatternNumbers = new RegExp("[^\\d]", "g")
+const rgxPatternColor = new RegExp("set_color_profile_slot\\(\\d+,\\d+,\\d+,\\d+,\\d+\\);", "i") //Matches set_color_profile_slot function
+const rgxPatternInit = new RegExp("set_num_palettes\\(\\d+\\);", "i") //Matches set_num_palettes function
+const rgxPatternRange = new RegExp("set_color_profile_slot_range\\(\\d+,\\d+,\\d+,\\d+\\);", "i") //Matches set_color_profile_slot_range function
+const rgxPatternEmpty = new RegExp("\\s", "g") //Matches all whitespace characters
+const rgxPatternNumbers = new RegExp("[^\\d]", "g") //Matches all non-digit characters
 
 
 function skinNameByID(integer){ //returns ordinal as text for 1-9. Returns number itself as text if higher
@@ -17,15 +17,28 @@ function toHex(integer){ //converts number to its hexadecimal representation as 
   return str.length == 1 ? "0" + str : str;
 }
 
-function parser(input) { //returns object
+function min(a, b){ //returns minimum out of two inputs
+  return a < b ? a : b;
+}
+
+function max(a, b){ //returns maximum out of two unputs
+  return a > b ? a : b;
+}
+
+function cap(a){  //caps a number between 0 and 255
+  return max(min(a, 255),0);
+}
+
+function parser(input) { //returns object if successful; return string array if it contains errors
 
   let skinNum = 0; //Number of skins the character has
   let regionNum = 0; //Number of different tracked colors the character has
-  let initialMatrix = []; //stores colors in the first parse - initialMatrix[i] = (skin, slot, R,G,B)
+  let initialMatrix = []; //Stores colors in the first parse - initialMatrix[i] = (skin, slot, R,G,B)
   let trueSkinsMatrix = []; //Stores the final colors for skins - trueSkinsMatrix[skin][slot] = (R,G,B)
-  let initialRanges = []; //stores ranges in the first parse - initialRanges[i] = (slot, H, S, V)
-  let colorRangeMat = []; //stores the final color ranges - colorRangeMat[slot] = (H,S,V)
-  let codes = []; //stores each skin's code - codes[skin] = skin code string, eg: "0123-4567-89AB"
+  let initialRanges = []; //Stores ranges in the first parse - initialRanges[i] = (slot, H, S, V)
+  let colorRangeMat = []; //Stores the final color ranges - colorRangeMat[slot] = (H,S,V)
+  let codes = []; //Stores each skin's code - codes[skin] = skin code string, eg: "0123-4567-89AB"
+  let errors = []; //Stores all encountered errors as plain text
 
 
   let splitInput = input.split("\n");
@@ -36,7 +49,7 @@ function parser(input) { //returns object
 
   splitInput.forEach((item, i) => {
     if (rgxPatternColor.test(item)){ //Reads colors slots
-      const values = item.split(rgxPatternNumbers).filter(a => a);
+      const values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
       values.forEach((itemb, j) => {
         values[j] = parseInt(itemb);
       });
@@ -44,27 +57,26 @@ function parser(input) { //returns object
     }
 
     else if (rgxPatternInit.test(item)){ //Reads number of skins
-      skinNum = item.split(rgxPatternNumbers).filter(a => a)[0];
+      skinNum = item.split(rgxPatternNumbers).filter(a => a)[0]; //retains only numbers, to grab function value
     }
 
     else if(rgxPatternRange.test(item)){ //Reads up color ranges
-      const values = item.split(rgxPatternNumbers).filter(a => a);
+      const values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
       values.forEach((itemb, j) => {
         values[j] = parseInt(itemb);
       });
       initialRanges.push(values);
     }
   });
-
   //set number of color regions
-  initialMatrix.forEach((item, i) => {
-    if (item[1] >= regionNum) regionNum = item[1]+1;
+  initialRanges.forEach((item, i) => {
+    if (item[0] >= regionNum) regionNum = item[0]+1;
   });
 
   //Sets color range
   colorRangeMat = new Array(parseInt(regionNum));
   initialRanges.forEach((item, i) => {
-    colorRangeMat[item[0]] = new Array(item[1]%256, item[2]%256, item[3]%256);
+    colorRangeMat[item[0]] = new Array(cap(item[1]), cap(item[2]), cap(item[3]));
   });
 
   //initialize final matrix of skins
@@ -73,7 +85,7 @@ function parser(input) { //returns object
     trueSkinsMatrix[i] = new Array(parseInt(regionNum));
   }
   initialMatrix.forEach((item, i) => {
-    trueSkinsMatrix[item[0]][item[1]] = new Array(item[2]%256, item[3]%256, item[4]%256)
+    trueSkinsMatrix[item[0]][item[1]] = new Array(cap(item[2]), cap(item[3]), cap(item[4]))
   });
 
   //Create code for each skin
@@ -100,6 +112,26 @@ function parser(input) { //returns object
     }
     codes[i] = newCode;
   });
+
+  //ERROR DETECTION
+  //check if empty entries in ranges matrix
+  for (i = 0; i < regionNum; ++i){
+    if (colorRangeMat[i] === undefined || colorRangeMat[i].length == 0){
+      errors.push("Missing color slot: " + i);
+    }
+  }
+  //check if any color for any slot is missing
+  trueSkinsMatrix.forEach((item, i) => {
+    for (j = 0; j < regionNum; ++j){
+      if (item[j] === undefined || item[j].length == 0){
+        errors.push("Missing color for sking " + i + " slot " + j);
+      }
+    }
+  });
+  if (errors.length != 0){
+    //console.log(errors)
+    return errors;
+  }
 
   //Export to Json
 
@@ -158,9 +190,14 @@ if (require.main === module) {
 
     let result = parser(data);
 
-    fs.writeFile("_info.json", JSON.stringify(result, null, 4), function(err) {
-      if (err) console.log(err)
-    })
+    if (Array.isArray(result)){ //Function has returned errors
+      console.log(result)
+    }
+    else{
+      fs.writeFile("_info.json", JSON.stringify(result, null, 4), function(err) {
+        if (err) console.log(err)
+      })
+    }
 
   });
 }
