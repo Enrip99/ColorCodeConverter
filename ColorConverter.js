@@ -45,8 +45,12 @@ function stripComments(str) { //removes comments from colors file
         });
 }
 
-function parser(input) {  //returns object if successful; return string array if it contains errors
-                          //input should be a single string containing the whole code of colors.gml
+
+//input: string -   contains the whole code of colors.gml
+//force: boolean -  if true, won't return prematurely if errors are encountered
+//returns: object - returns object containing skin names and their color codes; the original color; the color ranges; and the three different layout positions and scales
+//                  {skinList:{name:string,hex:string}[], ogColor:int[], colorRange:int[], scoreboard:{neutral:{x:num,y:num,scale:num}}, vsScreen:{neutral:{x:num,y:num,scale:num}}, gui:{neutral:{x:num,y:num,scale:num}}}
+function parser(input, force) {
 
   let skinNum = 0; //Number of skins the character has
   let regionNum = 0; //Number of different tracked colors the character has
@@ -135,21 +139,23 @@ function parser(input) {  //returns object if successful; return string array if
 
   //ERROR DETECTION
   //check if some slots have been skipped
-  for (i = 0; i < regionNum; ++i){
+  for (let i = 0; i < regionNum; ++i){
     if (colorRangeMat[i] === undefined || colorRangeMat[i].length == 0){
       errors.push("Missing color slot: " + i);
     }
   }
   //check if any color for any slot is missing
   trueSkinsMatrix.forEach((item, i) => {
-    for (j = 0; j < regionNum; ++j){
+    for (let j = 0; j < regionNum; ++j){
       if (item[j] === undefined || item[j].length == 0){
-        errors.push("Missing color for sking " + i + " slot " + j);
+        errors.push("Missing color for skin " + i + " slot " + j);
       }
     }
   });
   if (errors.length != 0){  //Returns prematurely if any errors have been encountered so far
-    return errors;
+    errors.unshift("The following " + errors.length + " errors have been found:");
+    if (!force) return errors;
+    else console.log(errors);
   }
 
   //Export to Json
@@ -204,13 +210,34 @@ function parser(input) {  //returns object if successful; return string array if
 
 if (require.main === module) {
   let inputFile = "colors.gml";
+  let force = false;
+
+
   if (process.argv.length == 3){
-    inputFile = process.argv[2];
+    if (process.argv[2] === "-f"){
+      force = true;
+    }
+    else{
+      inputFile = process.argv[2];
+    }
   }
+
+  else if(process.argv.length == 4){
+    if (process.argv[2] === "-f"){
+      force = true;
+    }
+    else {
+      console.log("Invalid argument");
+      return;
+    }
+    inputFile = process.argv[3];
+  }
+
+
   fs.readFile(inputFile, 'utf8', function(err, data) {
     if (err) throw err;
 
-    let result = parser(data);
+    let result = parser(data, force);
 
     if (Array.isArray(result)){ //Function has returned errors
       console.log(result)

@@ -2,7 +2,7 @@
 
 This tool allows you to convert a Rivals of Aether Workshop character's **colors.gml** file into the required **_info.json** file to use with [Readek's Stream Tool](https://github.com/Readek/RoA-Stream-Tool).
 
-Though this is intended to be used in the [demo website](URL PENDING), local use is also possible. Simply run the command `node ColorConverter.js` and it will create *(or overwrite!)* the **_info.json** file on this same directory. By default, the program will use the **colors.gml** file in this directory, but a different file can be provided through the terminal at launch, such as by executing `node ColorConverter.js ../Sandbert/scripts/colors.gml`
+Though this is intended to be used in the [demo website](URL PENDING), local use is also possible. Simply run the command `node ColorConverter.js` and it will create *(or overwrite!)* the **_info.json** file on this same directory. By default, the program will use the **colors.gml** file in this directory, but a different file can be provided through the terminal at launch, such as by executing `node ColorConverter.js ../Sandbert/scripts/colors.gml`. The flag `-f` can be used *(before a file name)* for **f**orce the program to complete even if errors are encountered.
 
 This tool will **NOT**:
  - Name your skins - They will all be given placeholder names. Whether you want them to be named after colors, or after omething else, you will have to manually edit the resulting file.
