@@ -10,6 +10,8 @@ This tool will **NOT**:
  - Support skins that use a different portrait - The color code will be generated accordingly, but you will have to manually edit the resulting file to include a reference to the different artwork.
  - Position your character for the stream layout - The character's position and scale on the layout is initialized to 0,0,1. You will have to manually edit the resulting file to position the character properly.
 
+To manually edit the file, refer to the [Workshop guide in the Stream tool Wiki](https://github.com/Readek/RoA-Stream-Tool/wiki/6.-Workshop-characters)
+
 In case the provided **colors.gml** has not been properly created *(unassigned colors, assigning colors to non-existing skins...)*, a message on the terminal will notify such errors and cancel the execution. If you believe you have encountered an error, please contact me!
 
 The included **colors.gml** and **_info.json** are provided as examples, belonging to Guadua.
