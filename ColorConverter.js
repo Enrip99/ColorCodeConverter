@@ -6,10 +6,10 @@ const rgxPatternEmpty = new RegExp("\\s", "g") //Matches all whitespace characte
 const rgxPatternNumbers = new RegExp("[^\\d]", "g") //Matches all non-digit characters
 
 
-function skinNameByID(integer){ //returns ordinal as text for 1-9. Returns number itself as text if higher
-  let names = ["Default", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eigth", "Ninth"];
-  if (integer < 10 && integer >= 0) return names[integer];
-  return integer.toString();
+function skinNameByID(integer){ //returns ordinal as text for 0-9. Returns number itself+1 as text if higher
+  let names = ["Default", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eigth", "Ninth", "Tenth"];
+  if (integer < names.length && integer >= 0) return names[integer];
+  return (integer+1).toString();
 }
 
 function toHex(integer){ //converts number to its hexadecimal representation as an upper-case string
@@ -29,7 +29,8 @@ function cap(a){  //caps a number between 0 and 255
   return max(min(a, 255),0);
 }
 
-function parser(input) { //returns object if successful; return string array if it contains errors
+function parser(input) {  //returns object if successful; return string array if it contains errors
+                          //input should be a single string containing the whole code of colors.gml
 
   let skinNum = 0; //Number of skins the character has
   let regionNum = 0; //Number of different tracked colors the character has
@@ -46,7 +47,7 @@ function parser(input) { //returns object if successful; return string array if 
     splitInput[i] = item.split("//")[0].replace(rgxPatternEmpty, "");
   });
 
-
+  //Scan through all lines of code, store them in temporary values
   splitInput.forEach((item, i) => {
     if (rgxPatternColor.test(item)){ //Reads colors slots
       const values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
@@ -68,6 +69,7 @@ function parser(input) { //returns object if successful; return string array if 
       initialRanges.push(values);
     }
   });
+
   //set number of color regions
   initialRanges.forEach((item, i) => {
     if (item[0] >= regionNum) regionNum = item[0]+1;
@@ -84,8 +86,11 @@ function parser(input) { //returns object if successful; return string array if 
   for (let i = 0; i < skinNum; ++i){
     trueSkinsMatrix[i] = new Array(parseInt(regionNum));
   }
-  initialMatrix.forEach((item, i) => {
-    trueSkinsMatrix[item[0]][item[1]] = new Array(cap(item[2]), cap(item[3]), cap(item[4]))
+  initialMatrix.forEach((item, i) => { //adds values to matrix after checking validity of access
+    if (item[0] >= skinNum && item[1] >= regionNum) errors.push("Attempting to add non-existant color slot " + item[1] + " to non-existant skin " + item[0]);
+    else if (item[0] >= skinNum) errors.push("Attempting to add color slot " + item[1] + " to non-existant skin " + item[0]);
+    else if (item[1] >= regionNum) errors.push("Attempting to add non-existant color slot " + item[1] + " to skin " + item[0]);
+    else trueSkinsMatrix[item[0]][item[1]] = new Array(cap(item[2]), cap(item[3]), cap(item[4]))
   });
 
   //Create code for each skin
@@ -114,7 +119,7 @@ function parser(input) { //returns object if successful; return string array if 
   });
 
   //ERROR DETECTION
-  //check if empty entries in ranges matrix
+  //check if some slots have been skipped
   for (i = 0; i < regionNum; ++i){
     if (colorRangeMat[i] === undefined || colorRangeMat[i].length == 0){
       errors.push("Missing color slot: " + i);
@@ -128,13 +133,11 @@ function parser(input) { //returns object if successful; return string array if 
       }
     }
   });
-  if (errors.length != 0){
-    //console.log(errors)
+  if (errors.length != 0){  //Returns prematurely if any errors have been encountered so far
     return errors;
   }
 
   //Export to Json
-
   //skinList
   let skinListArr = [];
   codes.forEach((item, i) => {
@@ -193,7 +196,7 @@ if (require.main === module) {
     if (Array.isArray(result)){ //Function has returned errors
       console.log(result)
     }
-    else{
+    else{ //Function has returned successfully
       fs.writeFile("_info.json", JSON.stringify(result, null, 4), function(err) {
         if (err) console.log(err)
       })
