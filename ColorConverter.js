@@ -14,30 +14,63 @@ const RE_BLOCKS = new RegExp([
     'gm'  // note: global+multiline with replace() need test
     );
 
+/**
+ * Returns the ordinal for the given number
+ * @param {Number} integer - Function input
+ * @return {String} - Ordinal for integer+1, or the number converted to string if outside the scope
+ */
 function skinNameByID(integer){ //returns ordinal as text for 0-9. Returns number itself+1 as text if higher
   let names = ["Default", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eigth", "Ninth", "Tenth"];
   if (integer < names.length && integer >= 0) return names[integer];
   return (integer+1).toString();
 }
 
+
+/**
+ * Returns the input in hexadecimal form
+ * @param {Number} integer - Function input
+ * @return {String} - Input converted into Hexadecimal
+ */
 function toHex(integer){ //converts number to its hexadecimal representation as an upper-case string
   let str = Number(integer).toString(16).toUpperCase();
   return str.length == 1 ? "0" + str : str;
 }
 
-function min(a, b){ //returns minimum out of two inputs
+/**
+ * Returns the smallest of two numbers
+ * @param {Number} a - First input
+ * @param {Number} b - Second input
+ * @return {Number} - Whoever is smaller, a or b
+ */
+function min(a, b){
   return a < b ? a : b;
 }
 
-function max(a, b){ //returns maximum out of two unputs
+/**
+ * Returns the biggest of two numbers
+ * @param {Number} a - First input
+ * @param {Number} b - Second input
+ * @return {Number} - Whoever is bigger, a or b
+ */
+function max(a, b){
   return a > b ? a : b;
 }
 
-function cap(a){  //caps a number between 0 and 255
+/**
+ * Limits the input between 0 and 255
+ * @param {Number} a - Number to cap
+ * @return {Number} - Input limited between the range [0,255]
+ */
+function cap(a){
   return max(min(a, 255),0);
 }
 
-function stripComments(str) { //removes comments from colors file
+/**
+ * Removes comments from .gml file
+ * @param {String} str - Code to remove the comments from
+ * @return {String} - Code with comments removed
+ */
+function stripComments(str) {
     return str.replace(RE_BLOCKS, function (match, mlc, slc) {
         return mlc ? ' ' :     // multiline comment (must be replaced with one space)
                slc ? '' :      // single-line comment
@@ -45,11 +78,13 @@ function stripComments(str) { //removes comments from colors file
         });
 }
 
-
-//input: string -   contains the whole code of colors.gml
-//force: boolean -  if true, won't return prematurely if errors are encountered
-//returns: object - returns object containing skin names and their color codes; the original color; the color ranges; and the three different layout positions and scales
-//                  {skinList:{name:string,hex:string}[], ogColor:int[], colorRange:int[], scoreboard:{neutral:{x:num,y:num,scale:num}}, vsScreen:{neutral:{x:num,y:num,scale:num}}, gui:{neutral:{x:num,y:num,scale:num}}}
+/**
+ * Main function. Takes the contents of a colors.gml file and outputs the contents of its corresponding _info.json
+ * @param {String} input - contains the whole code of colors.gml
+ * @param {Boolean} force - if true, won't return prematurely if errors are encountered
+ * @return {object} - object containing skin names and their color codes; the original color; the color ranges; and the three different layout positions and scales
+ *                  {skinList:{name:string,hex:string}[], ogColor:int[], colorRange:int[], scoreboard:{neutral:{x:num,y:num,scale:num}}, vsScreen:{neutral:{x:num,y:num,scale:num}}, gui:{neutral:{x:num,y:num,scale:num}}}
+ */
 function parser(input, force) {
 
   let skinNum = 0; //Number of skins the character has
@@ -208,29 +243,29 @@ function parser(input, force) {
   return finalObj;
 }
 
+//main()
 if (require.main === module) {
   let inputFile = "colors.gml";
   let force = false;
 
-
+  //Process arguments
   if (process.argv.length == 3){
-    if (process.argv[2] === "-f"){
+    if (process.argv[2] === "-f"){ //force flag
       force = true;
     }
     else{
-      inputFile = process.argv[2];
+      inputFile = process.argv[2]; //input file
     }
   }
-
   else if(process.argv.length == 4){
-    if (process.argv[2] === "-f"){
+    if (process.argv[2] === "-f"){  //force flag
       force = true;
     }
     else {
       console.log("Invalid argument");
       return;
     }
-    inputFile = process.argv[3];
+    inputFile = process.argv[3]; //input file
   }
 
 
