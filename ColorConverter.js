@@ -1,4 +1,5 @@
-const fs = require('fs');
+"use strict";
+
 const rgxPatternColor = new RegExp("set_color_profile_slot\\(\\d+,\\d+,\\d+,\\d+,\\d+\\);", "i") //Matches set_color_profile_slot function
 const rgxPatternInit = new RegExp("set_num_palettes\\(\\d+\\);", "i") //Matches set_num_palettes function
 const rgxPatternRange = new RegExp("set_color_profile_slot_range\\(\\d+,\\d+,\\d+,\\d+\\);", "i") //Matches set_color_profile_slot_range function
@@ -13,6 +14,12 @@ const RE_BLOCKS = new RegExp([
     ].join('|'),                                            // regex
     'gm'  // note: global+multiline with replace() need test
     );
+
+let colorData;
+const fileUploader = document.getElementById("fileUploader");
+fileUploader.addEventListener("change", getFile);
+const outputTextDiv = document.getElementById("outputText");
+const getFileButt = document.getElementById("getFileButt");
 
 /**
  * Returns the ordinal for the given number
@@ -244,7 +251,7 @@ function parser(input, force) {
 }
 
 //main()
-if (require.main === module) {
+/* if (require.main === module) {
   let inputFile = "colors.gml";
   let force = false;
 
@@ -283,5 +290,20 @@ if (require.main === module) {
       })
     }
 
-  });
+  }); 
+
+} */
+
+async function getFile() {
+  const string = await this.files[0].text();
+  colorData = JSON.stringify(parser(string), null, 2)
+  outputTextDiv.innerHTML = JSON.stringify(parser(string), null, 2);
+
+  outputTextDiv.style.display = "block";
+  getFileButt.style.display = "block";
+
+  const downText = new Blob([colorData], {type:'text/plain'});
+  getFileButt.parentElement.setAttribute("download", "colors.gml");
+  getFileButt.parentElement.href = window.URL.createObjectURL(downText); 
+
 }
