@@ -303,7 +303,7 @@ async function getFile() {
   getFileButt.style.display = "block";
 
   const downText = new Blob([colorData], {type:'text/plain'});
-  getFileButt.parentElement.setAttribute("download", "colors.gml");
-  getFileButt.parentElement.href = window.URL.createObjectURL(downText); 
+  getFileButt.parentElement.setAttribute("download", "_info.json");
+  getFileButt.parentElement.href = window.URL.createObjectURL(downText);
 
 }
