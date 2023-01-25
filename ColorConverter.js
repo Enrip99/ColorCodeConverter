@@ -229,6 +229,14 @@ function parser(input, force) {
     colorRangeArr.push(1);
   });
 
+  let defaultColData = {
+    ogColor: ogColArr,
+    colorRange: colorRangeArr
+  }
+  let colData = {
+    Default: defaultColData
+  }
+
   //scoreboard, vsScreen & gui
   let uiPos = {
     x: 0,
@@ -241,8 +249,7 @@ function parser(input, force) {
 
   let finalObj = {
     skinList: skinListArr,
-    ogColor: ogColArr,
-    colorRange: colorRangeArr,
+    colorData: colData,
     scoreboard: uiElement,
     vsScreen: uiElement,
     gui: uiElement
@@ -290,7 +297,7 @@ function parser(input, force) {
       })
     }
 
-  }); 
+  });
 
 } */
 
