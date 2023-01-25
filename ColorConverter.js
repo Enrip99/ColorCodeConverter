@@ -229,6 +229,15 @@ function parser(input, force) {
     colorRangeArr.push(1);
   });
 
+  //add ogColor and colorRange into a colorData.Default
+  let defaultColData = {
+    ogColor: ogColArr,
+    colorRange: colorRangeArr
+  }
+  let colData = {
+    Default: defaultColData
+  }
+
   //scoreboard, vsScreen & gui
   let uiPos = {
     x: 0,
@@ -241,8 +250,7 @@ function parser(input, force) {
 
   let finalObj = {
     skinList: skinListArr,
-    ogColor: ogColArr,
-    colorRange: colorRangeArr,
+    colorData: colData,
     scoreboard: uiElement,
     vsScreen: uiElement,
     gui: uiElement
@@ -250,60 +258,16 @@ function parser(input, force) {
   return finalObj;
 }
 
-//main()
-/* if (require.main === module) {
-  let inputFile = "colors.gml";
-  let force = false;
-
-  //Process arguments
-  if (process.argv.length == 3){
-    if (process.argv[2] === "-f"){ //force flag
-      force = true;
-    }
-    else{
-      inputFile = process.argv[2]; //input file
-    }
-  }
-  else if(process.argv.length == 4){
-    if (process.argv[2] === "-f"){  //force flag
-      force = true;
-    }
-    else {
-      console.log("Invalid argument");
-      return;
-    }
-    inputFile = process.argv[3]; //input file
-  }
-
-
-  fs.readFile(inputFile, 'utf8', function(err, data) {
-    if (err) throw err;
-
-    let result = parser(data, force);
-
-    if (Array.isArray(result)){ //Function has returned errors
-      console.log(result)
-    }
-    else{ //Function has returned successfully
-      fs.writeFile("_info.json", JSON.stringify(result, null, 4), function(err) {
-        if (err) console.log(err)
-      })
-    }
-
-  }); 
-
-} */
-
 async function getFile() {
   const string = await this.files[0].text();
   colorData = JSON.stringify(parser(string), null, 2)
-  outputTextDiv.innerHTML = JSON.stringify(parser(string), null, 2);
+  outputTextDiv.innerHTML = colorData.replace(/\n/g, "<br>");
 
   outputTextDiv.style.display = "block";
   getFileButt.style.display = "block";
 
   const downText = new Blob([colorData], {type:'text/plain'});
-  getFileButt.parentElement.setAttribute("download", "colors.gml");
-  getFileButt.parentElement.href = window.URL.createObjectURL(downText); 
+  getFileButt.parentElement.setAttribute("download", "_info.json");
+  getFileButt.parentElement.href = window.URL.createObjectURL(downText);
 
 }

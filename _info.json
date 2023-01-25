@@ -1,35 +1,37 @@
 {
-    "skinList": [
-        {
-            "name": "Default",
-            "hex": "3366-34B2-CD98-8868-5DF3"
-        },
-        {
-            "name": "Second",
-            "hex": "416F-99A9-C4DE-ABB6-B96E"
-        },
-        {
-            "name": "Third",
-            "hex": "922C-2CD8-AFAF-5E52-4FF0"
-        },
-        {
-            "name": "Fourth",
-            "hex": "7C73-13CD-CC98-6F85-6CE2"
-        },
-        {
-            "name": "Fifth",
-            "hex": "5D5D-5DCD-CDCD-6B39-3931"
-        },
-        {
-            "name": "Sixth",
-            "hex": "5233-66BB-98CD-3062-70B8"
-        },
-        {
-            "name": "Seventh",
-            "hex": "92CD-C7C1-D2D0-7997-94F8"
-        }
-    ],
-    "ogColor": [
+  "skinList": [
+    {
+      "name": "Default",
+      "hex": "3366-34B2-CD98-8868-5DF3"
+    },
+    {
+      "name": "Second",
+      "hex": "416F-99A9-C4DE-ABB6-B96E"
+    },
+    {
+      "name": "Third",
+      "hex": "922C-2CD8-AFAF-5E52-4FF0"
+    },
+    {
+      "name": "Fourth",
+      "hex": "7C73-13CD-CC98-6F85-6CE2"
+    },
+    {
+      "name": "Fifth",
+      "hex": "5D5D-5DCD-CDCD-6B39-3931"
+    },
+    {
+      "name": "Sixth",
+      "hex": "5233-66BB-98CD-3062-70B8"
+    },
+    {
+      "name": "Seventh",
+      "hex": "92CD-C7C1-D2D0-7997-94F8"
+    }
+  ],
+  "colorData": {
+    "Default": {
+      "ogColor": [
         51,
         102,
         52,
@@ -42,8 +44,8 @@
         104,
         93,
         1
-    ],
-    "colorRange": [
+      ],
+      "colorRange": [
         20,
         11,
         19,
@@ -56,26 +58,28 @@
         9,
         35,
         1
-    ],
-    "scoreboard": {
-        "neutral": {
-            "x": 0,
-            "y": 0,
-            "scale": 1
-        }
-    },
-    "vsScreen": {
-        "neutral": {
-            "x": 0,
-            "y": 0,
-            "scale": 1
-        }
-    },
-    "gui": {
-        "neutral": {
-            "x": 0,
-            "y": 0,
-            "scale": 1
-        }
+      ]
     }
+  },
+  "scoreboard": {
+    "neutral": {
+      "x": 0,
+      "y": 0,
+      "scale": 1
+    }
+  },
+  "vsScreen": {
+    "neutral": {
+      "x": 0,
+      "y": 0,
+      "scale": 1
+    }
+  },
+  "gui": {
+    "neutral": {
+      "x": 0,
+      "y": 0,
+      "scale": 1
+    }
+  }
 }
