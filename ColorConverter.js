@@ -20,6 +20,9 @@ const fileUploader = document.getElementById("fileUploader");
 fileUploader.addEventListener("change", getFile);
 const outputTextDiv = document.getElementById("outputText");
 const getFileButt = document.getElementById("getFileButt");
+const infoText = document.getElementById("infoText");
+const demoButt = document.getElementById("demoButt");
+demoButt.addEventListener("click", () => {demoFile()});
 
 /**
  * Returns the ordinal for the given number
@@ -258,16 +261,35 @@ function parser(input, force) {
   return finalObj;
 }
 
+/** Gets the file uploaded by the user */
 async function getFile() {
   const string = await this.files[0].text();
-  colorData = JSON.stringify(parser(string), null, 2)
+  colorData = JSON.stringify(parser(string), null, 2);
+  updateData();
+}
+
+/** Uses the demo (Guadua's) file */
+async function demoFile() {
+  
+  fetch("colors.gml")
+    .then((response) => response.text())
+    .then((data) => {
+      colorData = JSON.stringify(parser(data), null, 2);
+      updateData();
+    })
+
+}
+
+/** Updates data across the entire site according to current file being used */
+function updateData() {
+
   outputTextDiv.innerHTML = colorData.replace(/\n/g, "<br>");
 
+  // hide intro message, show file data
   outputTextDiv.style.display = "block";
-  getFileButt.style.display = "block";
+  infoText.style.display = "none";
 
   const downText = new Blob([colorData], {type:'text/plain'});
   getFileButt.parentElement.setAttribute("download", "_info.json");
   getFileButt.parentElement.href = window.URL.createObjectURL(downText);
-
 }

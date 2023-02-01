@@ -102,6 +102,28 @@ body::-webkit-scrollbar-thumb {
     overflow: auto;
 }
 
+
+#infoText {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 650px;
+}
+
+
+#introInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+#bottomButtons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #getFileButt {
     display: none;
 }
