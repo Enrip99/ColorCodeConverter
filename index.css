@@ -126,5 +126,6 @@ body::-webkit-scrollbar-thumb {
 
 #getFileButt {
     display: none;
+    margin-bottom: 30px;
 }
 

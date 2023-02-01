@@ -23,6 +23,12 @@ const getFileButt = document.getElementById("getFileButt");
 const infoText = document.getElementById("infoText");
 const demoButt = document.getElementById("demoButt");
 demoButt.addEventListener("click", () => {demoFile()});
+const dropZone = document.getElementById("content");
+dropZone.addEventListener("drop", (e) => {dropFile(e)});
+dropZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "link";
+})
 
 /**
  * Returns the ordinal for the given number
@@ -268,6 +274,14 @@ async function getFile() {
   updateData();
 }
 
+/** Pases the dropped file's content */
+async function dropFile(e) {
+  e.preventDefault();
+  const string = await e.dataTransfer.files[0].text();
+  colorData = JSON.stringify(parser(string), null, 2);
+  updateData();
+}
+
 /** Uses the demo (Guadua's) file */
 async function demoFile() {
   
@@ -287,9 +301,12 @@ function updateData() {
 
   // hide intro message, show file data
   outputTextDiv.style.display = "block";
+  getFileButt.style.display = "block";
   infoText.style.display = "none";
 
+  // add file data to the download button
   const downText = new Blob([colorData], {type:'text/plain'});
   getFileButt.parentElement.setAttribute("download", "_info.json");
   getFileButt.parentElement.href = window.URL.createObjectURL(downText);
+
 }
