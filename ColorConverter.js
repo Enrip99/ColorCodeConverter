@@ -15,20 +15,6 @@ const RE_BLOCKS = new RegExp([
     'gm'  // note: global+multiline with replace() need test
     );
 
-let colorData;
-const fileUploader = document.getElementById("fileUploader");
-fileUploader.addEventListener("change", getFile);
-const outputTextDiv = document.getElementById("outputText");
-const getFileButt = document.getElementById("getFileButt");
-const infoText = document.getElementById("infoText");
-const demoButt = document.getElementById("demoButt");
-demoButt.addEventListener("click", () => {demoFile()});
-const dropZone = document.getElementById("content");
-dropZone.addEventListener("drop", (e) => {dropFile(e)});
-dropZone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = "link";
-})
 
 /**
  * Returns the ordinal for the given number
@@ -267,6 +253,25 @@ function parser(input, force) {
   return finalObj;
 }
 
+// front end stuff
+let colorData;
+const fileUploader = document.getElementById("fileUploader");
+fileUploader.addEventListener("change", getFile);
+const outputTextDiv = document.getElementById("outputText");
+const getFileButt = document.getElementById("getFileButt");
+const infoText = document.getElementById("infoText");
+const demoButt = document.getElementById("demoButt");
+demoButt.addEventListener("click", () => {demoFile()});
+const dropZone = document.getElementById("content");
+dropZone.addEventListener("drop", (e) => {dropFile(e)});
+dropZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "link";
+})
+const outputOgDiv = document.getElementById("ogColors");
+const outputCrDiv = document.getElementById("colorRanges");
+const outputHexDiv = document.getElementById("skinCodes");
+
 /** Gets the file uploaded by the user */
 async function getFile() {
   const string = await this.files[0].text();
@@ -297,10 +302,64 @@ async function demoFile() {
 /** Updates data across the entire site according to current file being used */
 function updateData() {
 
-  outputTextDiv.innerHTML = colorData.replace(/\n/g, "<br>");
+  const jsonData = JSON.parse(colorData);
+
+  outputOgDiv.innerHTML = "";
+  for (let i = 0; i < jsonData.colorData.Default.ogColor.length; i+=4) {
+
+    const ogColor = jsonData.colorData.Default.ogColor;
+
+    const newDiv = document.createElement("div");
+    newDiv.style.display = "flex";
+    newDiv.style.gap = "5px"
+
+    const colorRect = document.createElement("div");
+    colorRect.classList.add("colorRect");
+    colorRect.style.backgroundColor = `rgb(${ogColor[i]}, ${ogColor[i+1]}, ${ogColor[i+2]}`
+    newDiv.appendChild(colorRect);
+    
+    const colorText = document.createElement("span");
+    colorText.innerHTML = `${ogColor[i]}, ${ogColor[i+1]}, ${ogColor[i+2]}, ${ogColor[i+3]}`;
+    newDiv.appendChild(colorText);
+
+    outputOgDiv.appendChild(newDiv);
+
+  }
+
+  outputCrDiv.innerHTML = "";
+  for (let i = 0; i < jsonData.colorData.Default.colorRange.length; i+=4) {
+
+    const colorRange = jsonData.colorData.Default.colorRange;
+
+    const newDiv = document.createElement("div");
+    newDiv.style.display = "flex";
+    newDiv.style.gap = "5px"
+    
+    const colorText = document.createElement("span");
+    colorText.innerHTML = `${colorRange[i]}, ${colorRange[i+1]}, ${colorRange[i+2]}, ${colorRange[i+3]}`;
+    newDiv.appendChild(colorText);
+
+    outputCrDiv.appendChild(newDiv);
+
+  }
+
+  outputHexDiv.innerHTML = "";
+  for (let i = 0; i < jsonData.skinList.length; i++) {
+
+    const newDiv = document.createElement("div");
+    newDiv.style.display = "flex";
+    newDiv.style.gap = "5px"
+    
+    const colorText = document.createElement("span");
+    colorText.innerHTML = `${jsonData.skinList[i].hex}`;
+    newDiv.appendChild(colorText);
+
+    outputHexDiv.appendChild(newDiv);
+
+  }
 
   // hide intro message, show file data
-  outputTextDiv.style.display = "block";
+  outputTextDiv.style.display = "flex";
   getFileButt.style.display = "block";
   infoText.style.display = "none";
 
