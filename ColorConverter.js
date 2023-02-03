@@ -275,7 +275,10 @@ const outputHexDiv = document.getElementById("skinCodes");
 /** Gets the file uploaded by the user */
 async function getFile() {
   const string = await this.files[0].text();
-  colorData = JSON.stringify(parser(string), null, 2);
+  let temp = parser(string);
+  if (Array.isArray(temp)) alert(temp);
+  else JSON.stringify(temp, null, 2);
+//  colorData = JSON.stringify(parser(string), null, 2);
   updateData();
 }
 
@@ -283,13 +286,15 @@ async function getFile() {
 async function dropFile(e) {
   e.preventDefault();
   const string = await e.dataTransfer.files[0].text();
-  colorData = JSON.stringify(parser(string), null, 2);
+  if (Array.isArray(temp)) alert(temp);
+  else JSON.stringify(temp, null, 2);
+  //colorData = JSON.stringify(parser(string), null, 2);
   updateData();
 }
 
 /** Uses the demo (Guadua's) file */
 async function demoFile() {
-  
+
   fetch("colors.gml")
     .then((response) => response.text())
     .then((data) => {
@@ -317,7 +322,7 @@ function updateData() {
     colorRect.classList.add("colorRect");
     colorRect.style.backgroundColor = `rgb(${ogColor[i]}, ${ogColor[i+1]}, ${ogColor[i+2]}`
     newDiv.appendChild(colorRect);
-    
+
     const colorText = document.createElement("span");
     colorText.innerHTML = `${ogColor[i]}, ${ogColor[i+1]}, ${ogColor[i+2]}, ${ogColor[i+3]}`;
     newDiv.appendChild(colorText);
@@ -334,7 +339,7 @@ function updateData() {
     const newDiv = document.createElement("div");
     newDiv.style.display = "flex";
     newDiv.style.gap = "5px"
-    
+
     const colorText = document.createElement("span");
     colorText.innerHTML = `${colorRange[i]}, ${colorRange[i+1]}, ${colorRange[i+2]}, ${colorRange[i+3]}`;
     newDiv.appendChild(colorText);
@@ -349,7 +354,7 @@ function updateData() {
     const newDiv = document.createElement("div");
     newDiv.style.display = "flex";
     newDiv.style.gap = "5px"
-    
+
     const colorText = document.createElement("span");
     colorText.innerHTML = `${jsonData.skinList[i].hex}`;
     newDiv.appendChild(colorText);
