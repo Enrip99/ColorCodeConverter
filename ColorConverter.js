@@ -106,7 +106,7 @@ function parser(input, force) {
   //Scan through all lines of code, store them in temporary values
   splitInput.forEach((item, i) => {
     if (rgxPatternColor.test(item)){ //Reads colors slots
-      const values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
+      let values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
       values.forEach((itemb, j) => {
         values[j] = parseInt(itemb);
       });
@@ -118,7 +118,7 @@ function parser(input, force) {
     }
 
     else if(rgxPatternRange.test(item)){ //Reads up color ranges
-      const values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
+      let values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
       values.forEach((itemb, j) => {
         values[j] = parseInt(itemb);
       });
@@ -276,8 +276,11 @@ const outputHexDiv = document.getElementById("skinCodes");
 async function getFile() {
   const string = await this.files[0].text();
   let temp = parser(string);
-  if (Array.isArray(temp)) alert(temp);
-  else JSON.stringify(temp, null, 2);
+  if (Array.isArray(temp)) {
+    alert("There has been an error parsing the file. A description can be found in the console.")
+    console.log(temp);
+  }
+  else colorData = JSON.stringify(temp, null, 2);
 //  colorData = JSON.stringify(parser(string), null, 2);
   updateData();
 }
@@ -286,9 +289,11 @@ async function getFile() {
 async function dropFile(e) {
   e.preventDefault();
   const string = await e.dataTransfer.files[0].text();
-  if (Array.isArray(temp)) alert(temp);
-  else JSON.stringify(temp, null, 2);
-  //colorData = JSON.stringify(parser(string), null, 2);
+  if (Array.isArray(temp)) {
+    alert("There has been an error parsing the file. A description can be found in the console.")
+    console.log(temp);
+  }
+  else colorData = JSON.stringify(temp, null, 2);
   updateData();
 }
 
