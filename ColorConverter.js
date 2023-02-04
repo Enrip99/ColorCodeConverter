@@ -102,27 +102,30 @@ function parser(input, force) {
   splitInput.forEach((item, i) => { //remove spaces
     splitInput[i] = item.replace(rgxPatternEmpty, "");
   });
-
+  
   //Scan through all lines of code, store them in temporary values
   splitInput.forEach((item, i) => {
-    if (rgxPatternColor.test(item)){ //Reads colors slots
-      let values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
-      values.forEach((itemb, j) => {
-        values[j] = parseInt(itemb);
-      });
-      initialMatrix.push(values);
-    }
+    let values = [];
+    switch(true){
+      case rgxPatternColor.test(item): //Reads colors slots
+        values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
+        values.forEach((itemb, j) => {
+          values[j] = parseInt(itemb);
+        });
+        initialMatrix.push(values);
+        break;
 
-    else if (rgxPatternInit.test(item)){ //Reads number of skins
-      skinNum = item.split(rgxPatternNumbers).filter(a => a)[0]; //retains only numbers, to grab function value
-    }
+      case rgxPatternInit.test(item): //Reads number of skins
+        skinNum = item.split(rgxPatternNumbers).filter(a => a)[0]; //retains only numbers, to grab function value
+        break;
 
-    else if(rgxPatternRange.test(item)){ //Reads up color ranges
-      let values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
-      values.forEach((itemb, j) => {
-        values[j] = parseInt(itemb);
-      });
-      initialRanges.push(values);
+      case rgxPatternRange.test(item): //Reads up color ranges
+        values = item.split(rgxPatternNumbers).filter(a => a); //retains only numbers, to grab function values
+        values.forEach((itemb, j) => {
+          values[j] = parseInt(itemb);
+        });
+        initialRanges.push(values);
+        break;
     }
   });
 
