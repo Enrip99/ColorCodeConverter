@@ -2,7 +2,7 @@
 
 This tool allows you to convert a Rivals of Aether Workshop character's **colors.gml** file into the required **_info.json** file to use with [Readek's Stream Tool](https://github.com/Readek/RoA-Stream-Tool).
 
-This program is intended to be used in the [demo website](https://enrip99.github.io/ColorCodeConverter/).
+This program is intended to be used in the [demo website](https://enrip99.github.io/RivalsWorkshopColorParser/).
 
 This tool will **NOT**:
  - Name your skins - They will all be given placeholder names. Whether you want them to be named after colors, or after something else, you will have to manually edit the resulting file.
