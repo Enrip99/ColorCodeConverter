@@ -292,6 +292,7 @@ async function getFile() {
 async function dropFile(e) {
   e.preventDefault();
   const string = await e.dataTransfer.files[0].text();
+  let temp = parser(string);
   if (Array.isArray(temp)) {
     alert("There has been an error parsing the file. A description can be found in the console.")
     console.log(temp);
